@@ -41,6 +41,8 @@ echo "Installing cri-dockerd..."
 wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.15/cri-dockerd_0.3.15.3-0.ubuntu-focal_amd64.deb || report_error
 sudo dpkg -i cri-dockerd_0.3.15.3-0.ubuntu-focal_amd64.deb || report_error
 sudo apt-get install -f || report_error  # This will install any missing dependencies
+sudo systemctl enable cri-dockerd || report_error
+sudo systemctl enable docker || report_error
 
 # Step 5: Verify installation
 echo "Verifying Docker installation..."
