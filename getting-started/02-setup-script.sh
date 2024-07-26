@@ -21,11 +21,13 @@ cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
 EOF
+echo ""
 
 # Ensure modules are loaded immediately without needing to restart the server
 echo "Loading overlay and br_netfilter modules immediately..."
 sudo modprobe overlay
 sudo modprobe br_netfilter
+echo ""
 
 # Set system level config needed for kubernetes networking
 echo "Setting system level config for Kubernetes networking..."
@@ -35,21 +37,25 @@ net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
 sudo sysctl --system
+echo ""
 
 # Install containerd package
 echo "Installing containerd package..."
 sudo apt-get update
 sudo apt-get install -y containerd
+echo ""
 
 # Setup containerd configuration
 echo "Setting up containerd configuration..."
 sudo mkdir -p /etc/containerd
 sudo containerd config default | sudo tee /etc/containerd/config.toml
+echo ""
 
 # Check that containerd is running and using the config
 echo "Restarting and checking containerd service..."
 sudo systemctl restart containerd
 sudo systemctl status containerd
+echo ""
 
 echo "Containerd setup completed successfully."
 
@@ -60,24 +66,29 @@ echo "Containerd setup completed successfully."
 # Disable swap
 echo "Disabling swap..."
 sudo swapoff -a
+echo ""
 
 # Install prerequisites
 echo "Installing prerequisites..."
 sudo apt-get update
 sudo apt-get install -y apt-transport-https curl
+echo ""
 
 # Download the public signing key for the k8s package repos
 echo "Downloading public signing key for Kubernetes package repositories..."
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.27/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo ""
 
 # Setup repository configuration
 echo "Setting up Kubernetes repository configuration..."
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.27/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo ""
 
 # Update the apt package index and install Kubernetes tools
 echo "Updating apt package index and installing Kubernetes tools..."
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
+echo ""
 
 echo "Script completed successfully."
